@@ -1,110 +1,91 @@
 
 
-#Subtract approprite j from the len(sourceWord) until the final len(sourceWord) is 5 which is not equal to len(target) meaning they are not the same
-
+#Problem URL: https://code.google.com/codejam/contest/90101/dashboard
 def main():
 
-
-    with open("large_practice.txt") as f:
+    #Open a file to read
+    with open("largeInputAlienLanguage.txt") as f:
         lines = f.read().splitlines()
 
+    #extract how many lines of input to read from
     a, b ,c = lines[0].split(' ')
-    
-    #print(a)
-    #print(b) #number of target words
-    #print(c) # number of sourcewords
 
     int_a = int(a)
     int_b = int(b)
     int_c = int(c)
 
-
+    #Declare a dictionary, ine for the source words taken and one for the final output
     targetDic = []
     sourceWordDic = []
-
+    #read the words to be checked the language against
     lineCounter = 1
     for lineNum in range(int_b):
         targetDic.append(lines[lineNum + 1])
         lineCounter = lineCounter + 1
         
-    #print("TARGET DIC ", targetDic)
-    #print("LineCounter ", lineCounter)
-
+    #Read the alien language syntax
     for i in range(int_c):
         sourceWordDic.append(lines[lineCounter + i])
     
-    #print("SourceWordDic ", sourceWordDic)
-
     myCounter = 0
     my_dic = {}
-
+    #Go through both the appended dictionaries check if there is a match, if it is, increment a counter
     for s in range(len(sourceWordDic)):
         for t in range(len(targetDic)):
             if (inChecker(targetDic[t], sourceWordDic[s]) == True):
                 myCounter = myCounter + 1
             my_dic[s + 1] = myCounter
         myCounter = 0
-    #print("MY_DICT ", my_dic)
-            
 
+            
+    #Print the final dictionary items and their counts
     for key, value in my_dic.items():
         print("Case #",key, ": ", value, sep = '')
 
-
-    #target = "acea" 
-    #sourceWord = "(abc)(bcd)(cde)a" 
-    #print(inChecker(target, sourceWord))
-
+#This function checks whether a target word is equivalent to the source word (alien syntax)
 def inChecker(target, sourceWord):
     i = 0
     j = 0
+    #Declaring the lenght of the target word
     targetLength = len(target)
-    #print(targetLength)
     myCount = 0
     hasFound = False
+    #Declaring the length of the source word as source indexing later on
     sourceCounter = len(sourceWord)
     
-    
+    #Go through the source word and check if there is a "(" present
     while i < len(sourceWord):
-        
         if sourceWord[i] != "(":
-           # print("SOURCE WORD OUTSIDE: ", sourceWord[i])
+            #If the word at the index is within the target and source word, increment the count
             if myCount < len(target) and target[myCount] == sourceWord[i]:
-                #print("TARGET AT MYCOUNT O ", target[myCount])
                 myCount = myCount + 1
+            #Keep in track of the seperate count to see if "(" was present
             j = j + 1
-            
+        #If "(" was not present at all
         else:
             sourceCounter = sourceCounter - 1
             j = j + 1
+            #Check if the ")" was present
             while sourceWord[j] != ")":
-                #print("SOURCE WORD INSIDE: ", sourceWord[j])
                 sourceCounter = sourceCounter - 1
-                #print("TARGET AT MYCOUNT I", target[myCount])
+                #Check to see that if the target word is not found if the index of the target word and source word is the same
                 if myCount < len(target) and hasFound == False and target[myCount] == sourceWord[j]:
                     myCount = myCount + 1
+                    #The word has been found
                     hasFound = True
+                #increment the instance of find ")"
                 j = j + 1
-            
-            #if hasFound == False:
-                #myCount = -1
-                #break
+            #Once outside of ")", set hasFound to False
             hasFound = False
+            #increment the instance of find ")"
             j = j + 1
-            
+        #Critical, make sure that j become i because we want increment i more than once!
         i = j
         
-
-    #print("Source Counter ", sourceCounter)
-    #print("MyCount ", myCount)
-    #print(myCount)
-    #print(targetLength)
+    #Check to see if myCount was the index length of source word and myCount was equal to target length
+    #Better would have been sourceCounter == targetLength, but this works
     if myCount == sourceCounter and myCount == targetLength:
-        #print(target, " is in the ", sourceWord)
         return True
-    
-        #print(target, "is not in the", sourceWord)
-        
     return False
 
     
